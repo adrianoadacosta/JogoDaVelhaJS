@@ -6,6 +6,20 @@ let messageContainer = document.querySelector("#message");
 let messageText = document.querySelector("#message p");
 let secondPlayer;
 
+// evnto para definir o 2 jogadores ou IA
+for (let i = 0; i < buttons.length; i++) {
+  buttons[i].addEventListener("click", function () {
+    secondPlayer = this.getAttribute("id");
+    for (j = 0; j < buttons.length; j++) {
+      buttons[j].style.display = "none";
+    }
+    setTimeout(function () {
+      let container = document.querySelector("#container");
+      container.classList.remove("hide");
+    }, 500);
+  });
+}
+
 // contador de jogadas que vai incrementar a cada rodada comeca zerado
 let player1 = 0;
 let player2 = 0;
@@ -198,6 +212,9 @@ function declarerWinner(winner) {
   if (winner == "x") {
     scoreBoardX.textContent = parseInt(scoreBoardX.textContent) + 1;
     msg = "O jogador 1 venceu!";
+    /* else if (winner == "o" && secondPlayer == "ia-player") {
+    scoreboardY.textContent = parseInt(scoreboardY.textContent) + 1;
+    msg = "A IA Venceu!";} */
   } else if (winner == "o") {
     scoreBoardO.textContent = parseInt(scoreBoardO.textContent) + 1;
     msg = "O jogador 2 venceu!";
@@ -242,8 +259,39 @@ for (let i = 0; i < boxes.length; i++) {
       } else {
         player2++;
       }
+      if (secondPlayer == "ia-player") {
+        // funcao executar a jogada
+        computerPlay();
+        player2++;
+      }
       // quem ganhou o jogo
       checkWinCondition();
     }
   });
+}
+
+// executar a logica da jogada do computador
+function computerPlay() {
+  let cloneO = o.cloneNode(true);
+  counter = 0;
+  filled = 0;
+
+  for (let i = 0; i < boxes.length; i++) {
+    let randomNumber = Math.floor(Math.random() * 5);
+
+    // so preenche se tiver vazio o filho
+    if (boxes[i].childNodes[0] == undefined) {
+      if (randomNumber <= 1) {
+        boxes[i].appendChild(cloneO);
+        counter++;
+        break;
+      }
+      //checagem do que esta preenchido
+    } else {
+      filled++;
+    }
+  }
+  if (counter == 0 && filled < 9) {
+    computerPlay();
+  }
 }
